@@ -2164,6 +2164,42 @@ Discarded input sections
                 0x0000000000000000        0x4 src/main.o
  .rodata._ZN3I2C15StatusRegister1L8StartBitE
                 0x0000000000000000        0x4 src/main.o
+ .rodata._ZN3I2C15StatusRegister2L14RegisterOffsetE
+                0x0000000000000000        0x4 src/main.o
+ .rodata._ZN3I2C15StatusRegister2L13RegisterResetE
+                0x0000000000000000        0x4 src/main.o
+ .rodata._ZN3I2C15StatusRegister2L15DualAddressFlagE
+                0x0000000000000000        0x4 src/main.o
+ .rodata._ZN3I2C15StatusRegister2L7SMBHostE
+                0x0000000000000000        0x4 src/main.o
+ .rodata._ZN3I2C15StatusRegister2L10SMBDefaultE
+                0x0000000000000000        0x4 src/main.o
+ .rodata._ZN3I2C15StatusRegister2L11GeneralCallE
+                0x0000000000000000        0x4 src/main.o
+ .rodata._ZN3I2C15StatusRegister2L3TRAE
+                0x0000000000000000        0x4 src/main.o
+ .rodata._ZN3I2C15StatusRegister2L4BusyE
+                0x0000000000000000        0x4 src/main.o
+ .rodata._ZN3I2C15StatusRegister2L11MasterSlaveE
+                0x0000000000000000        0x4 src/main.o
+ .rodata._ZN3I2C20ClockControlRegisterL13RegiserOffsetE
+                0x0000000000000000        0x4 src/main.o
+ .rodata._ZN3I2C20ClockControlRegisterL13RegisterResetE
+                0x0000000000000000        0x4 src/main.o
+ .rodata._ZN3I2C20ClockControlRegisterL8FastSlowE
+                0x0000000000000000        0x4 src/main.o
+ .rodata._ZN3I2C20ClockControlRegisterL4DutyE
+                0x0000000000000000        0x4 src/main.o
+ .rodata._ZN3I2C12TRiseRegiserL14RegisterOffsetE
+                0x0000000000000000        0x4 src/main.o
+ .rodata._ZN3I2C12TRiseRegiserL13RegisterResetE
+                0x0000000000000000        0x4 src/main.o
+ .rodata._ZN3I2C14FilterRegisterL14RegisterOffsetE
+                0x0000000000000000        0x4 src/main.o
+ .rodata._ZN3I2C14FilterRegisterL13RegisterResetE
+                0x0000000000000000        0x4 src/main.o
+ .rodata._ZN3I2C14FilterRegisterL15AnalogFilterOffE
+                0x0000000000000000        0x4 src/main.o
  .text          0x0000000000000000       0x14 src/startup_stm32f40xx.o
  .data          0x0000000000000000        0x0 src/startup_stm32f40xx.o
  .bss           0x0000000000000000        0x0 src/startup_stm32f40xx.o
@@ -2641,21 +2677,21 @@ LOAD /opt/Atollic_TrueSTUDIO_for_STM32_x86_64_9.0.1/ARMTools/bin/../lib/gcc/arm-
                 0x00000000000001c8       0x22 /opt/Atollic_TrueSTUDIO_for_STM32_x86_64_9.0.1/ARMTools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv7e-m/fpu/crtn.o
 OUTPUT(stm_prototype_2.elf elf32-littlearm)
 
-.debug_info     0x0000000000000000     0x3bf3
+.debug_info     0x0000000000000000     0x3dad
  .debug_info    0x0000000000000000      0x366 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_exti.o
  .debug_info    0x0000000000000366      0xc98 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rcc.o
- .debug_info    0x0000000000000ffe     0x2441 src/main.o
- .debug_info    0x000000000000343f       0x83 src/startup_stm32f40xx.o
- .debug_info    0x00000000000034c2      0x154 src/stm32f4xx_it.o
- .debug_info    0x0000000000003616      0x5dd src/system_stm32f4xx.o
+ .debug_info    0x0000000000000ffe     0x25fb src/main.o
+ .debug_info    0x00000000000035f9       0x83 src/startup_stm32f40xx.o
+ .debug_info    0x000000000000367c      0x154 src/stm32f4xx_it.o
+ .debug_info    0x00000000000037d0      0x5dd src/system_stm32f4xx.o
 
-.debug_abbrev   0x0000000000000000      0xa17
+.debug_abbrev   0x0000000000000000      0xa28
  .debug_abbrev  0x0000000000000000      0x1bc Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_exti.o
  .debug_abbrev  0x00000000000001bc      0x1f8 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rcc.o
- .debug_abbrev  0x00000000000003b4      0x481 src/main.o
- .debug_abbrev  0x0000000000000835       0x12 src/startup_stm32f40xx.o
- .debug_abbrev  0x0000000000000847       0x78 src/stm32f4xx_it.o
- .debug_abbrev  0x00000000000008bf      0x158 src/system_stm32f4xx.o
+ .debug_abbrev  0x00000000000003b4      0x492 src/main.o
+ .debug_abbrev  0x0000000000000846       0x12 src/startup_stm32f40xx.o
+ .debug_abbrev  0x0000000000000858       0x78 src/stm32f4xx_it.o
+ .debug_abbrev  0x00000000000008d0      0x158 src/system_stm32f4xx.o
 
 .debug_aranges  0x0000000000000000      0x308
  .debug_aranges
@@ -2687,16 +2723,16 @@ OUTPUT(stm_prototype_2.elf elf32-littlearm)
  .debug_line    0x0000000000000ba9      0x211 src/stm32f4xx_it.o
  .debug_line    0x0000000000000dba      0x203 src/system_stm32f4xx.o
 
-.debug_str      0x0000000000000000     0x28f3
+.debug_str      0x0000000000000000     0x29f2
  .debug_str     0x0000000000000000      0x374 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_exti.o
                                         0x3ea (size before relaxing)
  .debug_str     0x0000000000000374      0x689 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rcc.o
                                         0x90a (size before relaxing)
- .debug_str     0x00000000000009fd     0x1dc1 src/main.o
-                                       0x2009 (size before relaxing)
- .debug_str     0x00000000000027be       0xa6 src/stm32f4xx_it.o
+ .debug_str     0x00000000000009fd     0x1ec0 src/main.o
+                                       0x2108 (size before relaxing)
+ .debug_str     0x00000000000028bd       0xa6 src/stm32f4xx_it.o
                                         0x280 (size before relaxing)
- .debug_str     0x0000000000002864       0x8f src/system_stm32f4xx.o
+ .debug_str     0x0000000000002963       0x8f src/system_stm32f4xx.o
                                         0x413 (size before relaxing)
 
 .comment        0x0000000000000000       0x7c

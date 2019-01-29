@@ -23,6 +23,11 @@ namespace I2C
 	typedef uint32_t OwnAddressRegister2Type;
 	typedef uint32_t DataRegisterType;
 	typedef uint32_t StatusRegister1Type;
+	typedef uint32_t StatusRegister2Type;
+	typedef uint32_t ClockControlRegisterType;
+	typedef uint32_t TRiseRegisterType;
+	typedef uint32_t FilterRegisterTYpe;
+
 
 	namespace BaseRegisters
 	{
@@ -453,7 +458,7 @@ namespace I2C
 		 * 		-In reception, a new byte is received (including ACK pulse)
 		 * 			and the data register has not been read yet.  New
 		 * 			received byte is lost.
-		 * 		-In transmissino when a new byte should be sent and the data
+		 * 		-In transmission when a new byte should be sent and the data
 		 * 			register has not been written yet.  The same byte is sent
 		 * 			twice.
 		 *
@@ -566,13 +571,314 @@ namespace I2C
 		 *
 		 */
 		constexpr StatusRegister1Type ADD10 = stm32fxx::bits::BIT3;
+		/**
+		 * @brief BTF - Byte Transfer Finished
+		 *
+		 * 			0: Data byte transfer not done
+		 * 			1: Data byte transfer succeeded
+		 *
+		 * 			-Set by hardware when NOSTRETCH = 0 and;
+		 * 			-In reception when a new byte is received (including ACK
+		 * 			pulse) and DR has not been read yet (RxNE = 1).
+		 * 			-In transmission when a new byte should be sent and DR has
+		 * 			not been written yet (TxE = 1).
+		 * 			-Cleared by software by either a read or write in the DR register
+		 * 			or by hardware after a START or a STOP condition in transmission
+		 * 			or when PE = 0;
+		 * 			Note: The BTF bit is not set after a NACK reception
+		 * 			-The BTF bit is not set if the next byte to be transmitted is the PEC
+		 * 			(TRA = 1 in I2C_SR2 register and PEC = 1 in I2C_CR1 register)
+		 */
 		constexpr StatusRegister1Type ByteTransferFinished = stm32fxx::bits::BIT2;
+		/**
+		 * @brief ADDR - Address Sent (Master mode)/Matched (Slave mode)
+		 *
+		 * 			This bit is cleared by software reading SR1 followed by reading
+		 * 			SR2 register, or by hardware when PE = 0.
+		 *
+		 * 			Address matched (Slave)
+		 * 			0: Address mismatched or not received
+		 * 			1: Received address matched
+		 *
+		 * 			-Set by hardware as soon as the received slave address matched with
+		 * 			the OAR registers content, or a general call, or a SMBus Device Default
+		 * 			address, or SMBus Host, or SMBus Alert is recognized.  (when enabled,
+		 * 			depending on the configuration.
+		 *
+		 * 			Note: In slave mode, it is recommended to perform the complete clearing
+		 * 			sequence (Read SR1, then read SR2) after ADDR is set.
+		 *
+		 * 			Address sent (Master)
+		 * 			0: No end of address transmission
+		 * 			1: End of address transmission
+		 *
+		 * 			-For 10-bit addressing, the bit is set after the ACK of the 2nd byte.
+		 * 			-For 7-bit addressing, the bit is set after the ACK of the byte.
+		 *
+		 * 			Note: ADDR is not set after a NACK reception.
+		 */
 		constexpr StatusRegister1Type Address = stm32fxx::bits::BIT1;
+		/**
+		 * @brief SB - Start bit (Master Mode)
+		 *
+		 * 			0: No Start condition
+		 * 			1: Start condition generated
+		 *
+		 * 			-Set when a start condition generated
+		 * 			-Cleared by software by reading the SR1 register followed by writing
+		 * 			the DR register, or by hardware when PE = 0
+		 */
 		constexpr StatusRegister1Type StartBit = stm32fxx::bits::BIT0;
 
 	}
 
+	/**
+	 * @brief I2C_SR2 - I2C Status Register 2
+	 *
+	 *			bits 15:8 - PEC[7:0] - Packet Error Checking register
+	 *				-This register contains the internal PEC when ENPEC = 1
+	 *
+	 *			bit 3 - Reserved, must be kept at reset value
+	 *
+	 *			-Note: Reading the I2C_SR2 after reading the I2C_SR1 clears the
+	 *			ADDR flag, even if the ADDR flag was set after reading I2C_SR1.
+	 *			Consequently, I2C_SR2 must be read only when ADDR is found set
+	 *			in I2C_SR1 or when the STOPF bit is cleared.
+	 *
+	 *
+	 */
+	namespace StatusRegister2
+	{
+
+		constexpr StatusRegister2Type RegisterOffset = 0x18U;
+		constexpr StatusRegister2Type RegisterReset = 0x00000000U;
+
+		/**
+		 * @brief DUALF - Dual address flag (slave mode)
+		 *
+		 * 			0: Received address matched with OAR1
+		 * 			1: Received address matched with OAR2
+		 *
+		 * 			-Cleared by hardware after a STOP condition or a repeated START
+		 * 			condition, or when PE = 0.
+		 *
+		 */
+		constexpr StatusRegister2Type DualAddressFlag = stm32fxx::bits::BIT7;
+		/**
+		 * @brief SMBHOST - SMBus host header (Slave mode)
+		 *
+		 * 			0: No SMBus host address
+		 * 			1: SMBus host address received when SMBTYPE = 1 and ENARP = 1
+		 *
+		 * 			-Cleared by hardware after a STOP condition or a repeated
+		 * 			START condition, or when PE = 0.
+		 *
+		 */
+		constexpr StatusRegister2Type SMBHost = stm32fxx::bits::BIT6;
+		/**
+		 * @brief SMBDEFAULT - SMBus device default address (Slave mode)
+		 *
+		 * 			0: No SMBus device default address
+		 * 			1: SMBus device default address received when ENARP = 1
+		 *
+		 * 			-Cleared by hardware after a STOP condition, or a repeated
+		 * 			START condition, or when PE = 0.
+		 *
+		 */
+		constexpr StatusRegister2Type SMBDefault = stm32fxx::bits::BIT5;
+		/**
+		 * @brief GENCALL - General call address (Slave Mode)
+		 *
+		 * 			0: No General Call
+		 * 			1: General Call Address received when ENGC = 1;
+		 *
+		 * 			-Cleared by hardware after a STOP condition, or a repeated
+		 * 			START condition, or when PE = 0.
+		 */
+		constexpr StatusRegister2Type GeneralCall = stm32fxx::bits::BIT4;
+		/**
+		 * @brief TRA - Transmitter/Receiver
+		 *
+		 * 			0: Data bytes received
+		 * 			1: Data bytes transmitted
+		 *
+		 * 			This bit is set depending on the R/W bit of the address byte,
+		 * 			at the end of total address phase.
+		 * 			It is also cleared by hardware after detection of STOP condition
+		 * 			(STOPF = 1), repeated START condition, loss of bus arbitration,
+		 * 			(ARLO = 1), or when PE = 0.
+		 *
+		 */
+		constexpr StatusRegister2Type TRA = stm32fxx::bits::BIT2;
+		/**
+		 * @brief BUSY - Bus Busy
+		 *
+		 * 			0: No communication on the bus
+		 * 			1: Communication ongoing on the bus
+		 *
+		 * 			-Set by hardware on detection of SDA or SCL low
+		 * 			-Cleared by hardware on detection of a STOP condition.
+		 *
+		 *
+		 * 			It indicates a communication in progress on the bus.  This information is still
+		 * 			updated when the interface is disabled (PE = 0).
+		 *
+		 */
+		constexpr StatusRegister2Type Busy = stm32fxx::bits::BIT1;
+		/**
+		 * @brief MSL - Master/Slave
+		 *
+		 * 			0: Slave Mode
+		 * 			1: Master Mode
+		 *
+		 * 			-Set by hardware as soon as the interface is in Master mode (SB = 1)
+		 * 			-Cleared by hardware after detecting a STOP condition on the bus,
+		 * 			or a loss of arbitration (ARLO = 1), or by hardware when PE = 0.
+		 *
+		 */
+		constexpr StatusRegister2Type MasterSlave = stm32fxx::bits::BIT0;
+
+	}
+
+	/**
+	 * @brief I2C_CCR - I2C Clock Control Register
+	 *
+	 *			bits 11:0 - CCR[11:0] - Clock Control register in Fm/Sm mode (Master mode)
+	 *
+	 *				Controls the SCL clock in master mode.
+	 *
+	 *				Sm Mode or SMBus:
+	 *				T_high = CCR * T_PCLK1
+	 *				T_low = CCR * T_PCLK1
+	 *
+	 *				Fm Mode:
+	 *				If Duty = 0:
+	 *				T_high = CCR * T_PCLK1
+	 *				T_low = 2 * CCR * T_PCLK1
+	 *
+	 *				If DUTY = 1: (to reach 400 kHz)
+	 *				T_high = 9 * CCR * T_PCLK1
+	 *				T_low = 16 * CCR * T_PCLK1
+	 *
+	 *				For instance in Sm mode, to generate a 100kHz SCL frequency:
+	 *				if FREQR = 08, T_PCLK1 = 125 ns so CCR must be programmed with 0x28
+	 *				(0x28 <=> 40d x 125 ns = 5000 ns.)
+	 *
+	 *				Note: The minimum allowed value is 0x04, except in FAST DUTY mode where
+	 *				the minimum allowed calue is 0x01.
+	 *
+	 *				t high = t r(SCL) + t w(SCLH) . See device datasheet for the definitions of parameters.
+	 *				t low = t f(SCL) + t w(SCLL) . See device datasheet for the definitions of parameters.
+	 *				I2C communication speed, fSCL ~ 1/(thigh + tlow). The real frequency may differ due to
+	 *				the analog noise filter input delay.
+	 *				The CCR register must be configured only when the I 2 C is disabled (PE = 0).
+	 *
+	 *			bit 13:12 - Reserved, must be kept at reset value
+	 *
+	 *			-Note: Reading the I2C_SR2 after reading the I2C_SR1 clears the
+	 *			ADDR flag, even if the ADDR flag was set after reading I2C_SR1.
+	 *			Consequently, I2C_SR2 must be read only when ADDR is found set
+	 *			in I2C_SR1 or when the STOPF bit is cleared.
+	 *
+	 *
+	 */
+	namespace ClockControlRegister
+	{
+
+		constexpr ClockControlRegisterType RegiserOffset = 0x1CU;
+		constexpr ClockControlRegisterType RegisterReset = 0x00000000U;
+
+		/**
+		 * @brief F/S - I2C mode Selection
+		 *
+		 * 			0: Sm mode I2C
+		 * 			1: Fm mode I2C
+		 *
+		 */
+		constexpr ClockControlRegisterType FastSlow = stm32fxx::bits::BIT15;
+		/**
+		 * @brief DUTY - Fm mode duty cycle
+		 *
+		 * 			0: Fm Mode t_low/t_high = 2
+		 * 			1: Fm Mode t_low/t_hight = 16/9 (see CCR)
+		 *
+		 */
+		constexpr ClockControlRegisterType Duty = stm32fxx::bits::BIT14;
+
+	}
+	/**
+	 * @brief I2C_TRISE - I2C TRISE register
+	 *
+	 * 	Bits 15:6 - Reserved, must be kept at reset value
+	 * 	Bits 5:0 - TRISE[5:0] - Maximum rise time in Fm/Sm mode (master mode)
+	 * 		These bits should provide the maximum duration of the SCL feedback
+	 * 		loop in master mode.  The purpose is to keep a stable SCL frequency
+	 * 		whatever the SCL rising edge duration.  These bits must be programmed
+	 * 		with the maximum SCL rise time given in the I2C bus specification,
+	 * 		incremented by 1.
+	 *
+	 * 		For instance: in Sm mode, the maximum allowed SCL rise time is 1000ns.
+	 * 		If, in the I2C_CR2 register, the value of FREQ[5:0] bits is equal to 0x08 and
+	 * 		T_PCLK1 = 125ns therefore the TRISE[5:0] bits must be programmed with 0x09.
+	 * 		(1000ns / 125ns = 8 +1)
+	 *
+	 * 		The filter value can also be added to TRIS[5:0].
+	 * 		If the result is not an integer, TRISE[5:0} must be programmed with the integer
+	 * 		part, in order to respect the t_high parameter.
+	 *
+	 * 		Note: TRISE[5:0] must be configured only when the I2C is disabled (PE = 0).
+	 */
+	namespace TRiseRegiser
+	{
+
+		constexpr TRiseRegisterType RegisterOffset = 0x20U;
+		constexpr TRiseRegisterType RegisterReset = 0x0002U;
+
+
+	}
+
+	/**
+	 * @brief I2C_FLTR - I2C Filter Register
+	 *
+	 * 		bits 15:5 - Reserved, must be kept at reset value
+	 * 		bit 3:0 - DNF[3:0] - Digital noise filter
+	 * 			These bits are used to configure the digital noise filter on SDA and SCL
+	 * 			inputs.  The digital filter will suppress the spikes with a length of up to DNF[3:0] * T_PCLK1
+	 *
+	 * 			0000: Digital noise filter disable
+	 * 			0001: Digital noise filter enabled and filtering with capability up to 1 * TPCLK.
+	 *
+	 * 			...
+	 *
+	 * 			1111: Digital noise filter enabled and filtering with capability up to 15 * TPCLK1.
+	 *
+	 * 			Note: DNF[3:0] must be configured when the I2C is disabled (PE = 0).  If the analog
+	 * 			filter is also enabled, the digital filter is added to the analog filter.
+	 *
+	 */
+	namespace FilterRegister
+	{
+
+		constexpr FilterRegisterTYpe RegisterOffset = 0x24U;
+		constexpr FilterRegisterTYpe RegisterReset = 0x00000000U;
+
+		/**
+		 * @brief ANOFF - Analog noise filter off
+		 *
+		 * 			0: Analog noise filter enable
+		 * 			1: Analog noise filter disable
+		 *
+		 * 			Note: ANOFF must be configured only when the I2C is
+		 * 			disabled (PE = 0).
+		 */
+		constexpr FilterRegisterTYpe AnalogFilterOff = stm32fxx::bits::BIT4;
+	}
+
 }
+
+
+
+
 
 
 
