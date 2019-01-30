@@ -9,6 +9,14 @@
 #define I2C_H_
 
 #include "registers.h"
+#include "reg_access.h"
+#include "reg_access_dynamic.h"
+#include "gpio.h"
+#include "stm32f4xx.h"
+#include "stm32f4xx_rcc.h"
+#include "stm32f4xx_gpio.h"
+#include "stm32f4xx_i2c.h"
+#include <array>
 
 
 
@@ -875,6 +883,44 @@ namespace I2C
 	}
 
 }
+
+class I2CMaster{
+
+public:
+    typedef std::array<uint8_t, 17>send_buffer_type;
+	I2CMaster(I2C::BaseRegisterType baseRegister);
+	int sendBytes(send_buffer_type sendBuffer, uint8_t address);
+
+private:
+
+	I2C::ClockControlRegisterType clockControlRegister;
+	I2C::ControlRegister1Type controlRegister1;
+	I2C::ControlRegister2Type controlRegister2;
+	I2C::DataRegisterType dataRegister;
+	I2C::FilterRegisterTYpe filterRegister;
+	I2C::OwnAddressRegisterType ownAddressRegister;
+	I2C::OwnAddressRegister2Type ownAddressRegister2;
+	I2C::StatusRegister1Type statusRegister1;
+	I2C::StatusRegister2Type statusRegister2;
+	I2C::TRiseRegisterType triseRegister;
+
+	  const GPIO<GPIOxBaseRegisters::GPIO_B,
+	  	  PINS::PIN7,
+	  	  GpioModes::Output,
+	  	  OutputTypes::OpenDrain,
+	  	  OutputSpeed::HighSpeed,
+	  	  PullUpPullDown::NoPullUpPullDown,
+	  	  AlternateFunction::AF4>sdaPin;
+
+	  const GPIO<GPIOxBaseRegisters::GPIO_B,
+	  	  PINS::PIN6,
+	  	  GpioModes::Output,
+	  	  OutputTypes::OpenDrain,
+	  	  OutputSpeed::HighSpeed,
+	  	  PullUpPullDown::NoPullUpPullDown,
+	  	  AlternateFunction::AF4>sclPin;
+
+};
 
 
 

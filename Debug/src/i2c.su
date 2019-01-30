@@ -1,0 +1,11 @@
+gthr-default.h:229:1:int __gthread_key_delete(__gthread_key_t)	16	static
+i2c.cpp:13:1:I2CMaster::I2CMaster(I2C::BaseRegisterType)	32	static
+i2c.cpp:61:5:int I2CMaster::sendBytes(I2CMaster::send_buffer_type, uint8_t)	16	static
+i2c.cpp:77:6:void I2C2_EV_IRQHandler()	4	static
+i2c.cpp:81:6:void I2C2_ER_IRQHandler()	4	static
+gpio.h:145:2:GPIO<gpio_bank, pinNumber, mode, outputType, outputSpeed, pullUpPullDown, alternateFunction>::GPIO() [with long unsigned int gpio_bank = 1073873920ul; long unsigned int pinNumber = 8ul; long unsigned int mode = 1ul; long unsigned int outputType = 1ul; long unsigned int outputSpeed = 2ul; long unsigned int pullUpPullDown = 0ul; long unsigned int alternateFunction = 4ul]	24	static
+gpio.h:145:2:GPIO<gpio_bank, pinNumber, mode, outputType, outputSpeed, pullUpPullDown, alternateFunction>::GPIO() [with long unsigned int gpio_bank = 1073873920ul; long unsigned int pinNumber = 7ul; long unsigned int mode = 1ul; long unsigned int outputType = 1ul; long unsigned int outputSpeed = 2ul; long unsigned int pullUpPullDown = 0ul; long unsigned int alternateFunction = 4ul]	24	static
+reg_access_dynamic.h:21:21:static void dynamic_access<register_address_type, register_value_type>::reg_or(register_address_type, register_value_type) [with register_address_type = long unsigned int; register_value_type = long unsigned int]	16	static
+reg_access_dynamic.h:22:21:static void dynamic_access<register_address_type, register_value_type>::reg_not(register_address_type, register_value_type) [with register_address_type = long unsigned int; register_value_type = long unsigned int]	16	static
+reg_access.h:26:17:static void reg_access<addr_type, reg_type, address, value>::reg_or() [with addr_type = long unsigned int; reg_type = long unsigned int; addr_type address = 1073873924ul; reg_type value = 128ul]	4	static
+reg_access.h:26:17:static void reg_access<addr_type, reg_type, address, value>::reg_or() [with addr_type = long unsigned int; reg_type = long unsigned int; addr_type address = 1073873924ul; reg_type value = 64ul]	4	static

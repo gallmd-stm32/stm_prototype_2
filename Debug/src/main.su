@@ -1,5 +1,6 @@
 core_cm4.h:1452:22:void NVIC_EnableIRQ(IRQn_Type)	16	static
 core_cm4.h:1535:22:void NVIC_SetPriority(IRQn_Type, uint32_t)	16	static
+gthr-default.h:229:1:int __gthread_key_delete(__gthread_key_t)	16	static
 main.cpp:67:7:void EXTI0_IRQHandler()	8	static
 main.cpp:91:5:int main()	24	static
 main.cpp:168:6:void Delay(uint32_t)	16	static
