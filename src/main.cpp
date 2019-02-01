@@ -40,6 +40,9 @@ SOFTWARE.
 /* Private variables */
 volatile bool buttonPressed;
 
+I2CMaster* I2CMaster::handlers[1] = {0};
+I2CMaster i2c(I2C::BaseRegisters::I2C1_Base);
+
 
 
 
@@ -120,6 +123,23 @@ int main(void)
 	  PullUpPullDown::NoPullUpPullDown,
 	  AlternateFunction::AF0>buttonPin;
 
+  const GPIO<GPIOxBaseRegisters::GPIO_B,
+  	  PINS::PIN6,
+  	  GpioModes::Output,
+  	  OutputTypes::OpenDrain,
+  	  OutputSpeed::HighSpeed,
+  	  PullUpPullDown::NoPullUpPullDown,
+  	  AlternateFunction::AF4>sdaPin;
+
+  const GPIO<GPIOxBaseRegisters::GPIO_B,
+  	  PINS::PIN7,
+  	  GpioModes::Output,
+  	  OutputTypes::OpenDrain,
+  	  OutputSpeed::HighSpeed,
+  	  PullUpPullDown::NoPullUpPullDown,
+  	  AlternateFunction::AF4>sclPin;
+
+
 
   SYSCFG->EXTICR[1] = SYSCFG_EXTICR1_EXTI0_PA;
 
@@ -128,6 +148,15 @@ int main(void)
 
   NVIC_EnableIRQ(EXTI0_IRQn);
   NVIC_SetPriority(EXTI0_IRQn, 0);
+
+  /* Configure the I2C event priority */
+  NVIC_InitTypeDef NVIC_InitStructure;
+  NVIC_InitStructure.NVIC_IRQChannel                   = I2C1_EV_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority        = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd                = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+
 
 //  SYSCFG->EXTICR[4] = SYSCFG_EXTICR4_EXTI13_PC;
 //
@@ -149,7 +178,21 @@ int main(void)
   */
 
   /* TODO - Add your application code here */
+  const std::array<uint8_t, 17> osc_on = {0x21, 0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+  i2c.sendBytes(osc_on, 0x070);
 
+  const std::array<uint8_t, 17> no_blink = {0x81, 0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+  i2c.sendBytes(no_blink, 0x070);
+
+  const std::array<uint8_t, 17> brightness = {0xEF, 0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+  i2c.sendBytes(brightness, 0x070);
+
+
+  const std::array<uint8_t, 17> all_on = {0x00, 0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00};
+  i2c.sendBytes(all_on, 0x070);
+
+  const std::array<uint8_t, 17> all_off = {0x00, 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+  i2c.sendBytes(all_off, 0x070);
 
 
 

@@ -891,6 +891,11 @@ public:
 	I2CMaster(I2C::BaseRegisterType baseRegister);
 	int sendBytes(send_buffer_type sendBuffer, uint8_t address);
 
+    static I2CMaster* handlers[1];
+    void EV_handler();
+    void ER_handler();
+
+
 private:
 
 	I2C::ClockControlRegisterType clockControlRegister;
@@ -904,21 +909,10 @@ private:
 	I2C::StatusRegister2Type statusRegister2;
 	I2C::TRiseRegisterType triseRegister;
 
-	  const GPIO<GPIOxBaseRegisters::GPIO_B,
-	  	  PINS::PIN7,
-	  	  GpioModes::Output,
-	  	  OutputTypes::OpenDrain,
-	  	  OutputSpeed::HighSpeed,
-	  	  PullUpPullDown::NoPullUpPullDown,
-	  	  AlternateFunction::AF4>sdaPin;
+	send_buffer_type send_buf;
+	uint8_t bytesSent;
 
-	  const GPIO<GPIOxBaseRegisters::GPIO_B,
-	  	  PINS::PIN6,
-	  	  GpioModes::Output,
-	  	  OutputTypes::OpenDrain,
-	  	  OutputSpeed::HighSpeed,
-	  	  PullUpPullDown::NoPullUpPullDown,
-	  	  AlternateFunction::AF4>sclPin;
+
 
 };
 

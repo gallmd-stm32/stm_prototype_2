@@ -164,7 +164,7 @@ public:
 		dynamic_access<GPIOxRegisterType, uint32_t>::reg_or(GPIOxPullUpPullDownRegister, tempMask);
 
 		//Set Alternate Function Register
-		if(pinNumber < PINS::PIN7){
+		if(pinNumber <= PINS::PIN7){
 			tempMask = 0x0U;
 			tempMask = alternateFunction << ((pinNumber - 1) * 4);
 			dynamic_access<GPIOxRegisterType, uint32_t>::reg_or(GPIOxAlternateFunctionLowRegister, tempMask);
