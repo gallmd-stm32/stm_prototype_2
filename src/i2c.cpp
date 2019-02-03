@@ -90,26 +90,28 @@ int I2CMaster::sendBytes(send_buffer_type sendBuffer, uint8_t address)
 {
 
 	bytesSent = 0;
+
 	send_buf = sendBuffer;
+	slaveAddress = address;
 
 	//Set Start Bit
 	dynamic_access<I2C::ControlRegister1Type, I2C::ControlRegister1Type> ::reg_or(controlRegister1, I2C::ControlRegister1::Start);
 
-	//Clear Start bit by reading SR1 followed by writing DR with address
-	//send address with LSB reset to enter transmit mode
-	dynamic_access<I2C::StatusRegister1Type, I2C::StatusRegister1Type>::reg_get(statusRegister1);
-	dynamic_access<I2C::DataRegisterType, uint8_t>::reg_set(dataRegister, (address << 1));
-
-	//ADDR = 1, cleared by reading SR1 register followed by reading SR2
-	dynamic_access<I2C::StatusRegister1Type, I2C::StatusRegister1Type>::reg_get(statusRegister1);
-	dynamic_access<I2C::StatusRegister2Type, I2C::StatusRegister2Type>::reg_get(statusRegister2);
-
-	//TxE = 1, write Data1 in DR
-	dynamic_access<I2C::DataRegisterType, uint8_t>::reg_set(dataRegister, send_buf[bytesSent]);
-	bytesSent++;
-
-	//keep writing data
-	//TxE = 1, BTF = 1, program stop request
+//	//Clear Start bit by reading SR1 followed by writing DR with address
+//	//send address with LSB reset to enter transmit mode
+//	dynamic_access<I2C::StatusRegister1Type, I2C::StatusRegister1Type>::reg_get(statusRegister1);
+//	dynamic_access<I2C::DataRegisterType, uint8_t>::reg_set(dataRegister, (address << 1));
+//
+//	//ADDR = 1, cleared by reading SR1 register followed by reading SR2
+//	dynamic_access<I2C::StatusRegister1Type, I2C::StatusRegister1Type>::reg_get(statusRegister1);
+//	dynamic_access<I2C::StatusRegister2Type, I2C::StatusRegister2Type>::reg_get(statusRegister2);
+//
+//	//TxE = 1, write Data1 in DR
+//	dynamic_access<I2C::DataRegisterType, uint8_t>::reg_set(dataRegister, send_buf[bytesSent]);
+//	bytesSent++;
+//
+//	//keep writing data
+//	//TxE = 1, BTF = 1, program stop request
 
 
 	return 1;
@@ -118,22 +120,34 @@ int I2CMaster::sendBytes(send_buffer_type sendBuffer, uint8_t address)
 void I2CMaster::EV_handler()
 {
 
-	if((dynamic_access<I2C::StatusRegister1Type, I2C::StatusRegister1Type>::reg_get(statusRegister1) & I2C::StatusRegister1::TransmitEmpty) && (bytesSent < 17)){
-		dynamic_access<I2C::DataRegisterType, uint8_t>::reg_set(dataRegister, send_buf[bytesSent]);
-		bytesSent++;
-	}
+//	reg_access<GPIOxRegisterType, GPIOxRegisterType, (GPIOxBaseRegisters::GPIO_B + RegisterOffsets::OutputDataRegisterOffset), stm32fxx::bits::BIT12>::reg_xor();
 
-	if((dynamic_access<I2C::StatusRegister1Type, I2C::StatusRegister1Type>::reg_get(statusRegister1) & I2C::StatusRegister1::TransmitEmpty) && (bytesSent = 17)){
-		dynamic_access<I2C::DataRegisterType, uint8_t>::reg_set(dataRegister, send_buf[bytesSent]);
-		dynamic_access<I2C::ControlRegister1Type, I2C::ControlRegister1Type>::reg_or(controlRegister1, I2C::ControlRegister1::Stop);
-		bytesSent++;
-	}
+	dynamic_access<I2C::StatusRegister1Type, I2C::StatusRegister1Type>::reg_get(statusRegister1);
+
+	dynamic_access<I2C::DataRegisterType, uint16_t>::reg_or(dataRegister, 0xE0);
+
+//	if((dynamic_access<I2C::StatusRegister1Type, I2C::StatusRegister1Type>::reg_get(statusRegister1) & I2C::StatusRegister1::TransmitEmpty) && (bytesSent < 17)){
+//		dynamic_access<I2C::DataRegisterType, uint8_t>::reg_set(dataRegister, send_buf[bytesSent]);
+//		bytesSent++;
+//	}
+//
+//	if((dynamic_access<I2C::StatusRegister1Type, I2C::StatusRegister1Type>::reg_get(statusRegister1) & I2C::StatusRegister1::TransmitEmpty) && (bytesSent = 17)){
+//		dynamic_access<I2C::DataRegisterType, uint8_t>::reg_set(dataRegister, send_buf[bytesSent]);
+//		dynamic_access<I2C::ControlRegister1Type, I2C::ControlRegister1Type>::reg_or(controlRegister1, I2C::ControlRegister1::Stop);
+//		bytesSent++;
+//	}
 
 }
 
 void I2CMaster::ER_handler()
 {
 
+	reg_access<GPIOxRegisterType, GPIOxRegisterType, (GPIOxBaseRegisters::GPIO_B + RegisterOffsets::OutputDataRegisterOffset), stm32fxx::bits::BIT12>::reg_xor();
+	  uint8_t nCount = 0xFFFF;
+		while(nCount--)
+	  {
+	  }
+	reg_access<GPIOxRegisterType, GPIOxRegisterType, (GPIOxBaseRegisters::GPIO_B + RegisterOffsets::OutputDataRegisterOffset), stm32fxx::bits::BIT12>::reg_xor();
 
 
 }

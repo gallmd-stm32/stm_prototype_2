@@ -911,6 +911,7 @@ private:
 
 	send_buffer_type send_buf;
 	uint8_t bytesSent;
+	uint8_t slaveAddress;
 
 
 
