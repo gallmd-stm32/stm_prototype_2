@@ -281,6 +281,7 @@ int main(void)
   {
 	  if(buttonPressed){
 	  greenLED.toggle();
+	  i2c.sendBytes(osc_on, 0x070);
 //	  Delay(0xFFFFF);
 	  buttonPressed = false;
 	  }

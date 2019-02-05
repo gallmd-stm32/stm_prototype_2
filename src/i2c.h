@@ -25,16 +25,16 @@ namespace I2C
 {
 
 	typedef uint32_t BaseRegisterType;
-	typedef uint32_t ControlRegister1Type;
-	typedef uint32_t ControlRegister2Type;
-	typedef uint32_t OwnAddressRegisterType;
-	typedef uint32_t OwnAddressRegister2Type;
-	typedef uint32_t DataRegisterType;
-	typedef uint32_t StatusRegister1Type;
-	typedef uint32_t StatusRegister2Type;
-	typedef uint32_t ClockControlRegisterType;
-	typedef uint32_t TRiseRegisterType;
-	typedef uint32_t FilterRegisterTYpe;
+	typedef uint16_t ControlRegister1Type;
+	typedef uint16_t ControlRegister2Type;
+	typedef uint16_t OwnAddressRegisterType;
+	typedef uint16_t OwnAddressRegister2Type;
+	typedef uint16_t DataRegisterType;
+	typedef uint16_t StatusRegister1Type;
+	typedef uint16_t StatusRegister2Type;
+	typedef uint16_t ClockControlRegisterType;
+	typedef uint16_t TRiseRegisterType;
+	typedef uint16_t FilterRegisterTYpe;
 
 
 	namespace BaseRegisters
@@ -898,16 +898,16 @@ public:
 
 private:
 
-	I2C::ClockControlRegisterType clockControlRegister;
-	I2C::ControlRegister1Type controlRegister1;
-	I2C::ControlRegister2Type controlRegister2;
-	I2C::DataRegisterType dataRegister;
-	I2C::FilterRegisterTYpe filterRegister;
-	I2C::OwnAddressRegisterType ownAddressRegister;
-	I2C::OwnAddressRegister2Type ownAddressRegister2;
-	I2C::StatusRegister1Type statusRegister1;
-	I2C::StatusRegister2Type statusRegister2;
-	I2C::TRiseRegisterType triseRegister;
+	I2C::BaseRegisterType clockControlRegister;
+	I2C::BaseRegisterType controlRegister1;
+	I2C::BaseRegisterType controlRegister2;
+	I2C::BaseRegisterType dataRegister;
+	I2C::BaseRegisterType filterRegister;
+	I2C::BaseRegisterType ownAddressRegister;
+	I2C::BaseRegisterType ownAddressRegister2;
+	I2C::BaseRegisterType statusRegister1;
+	I2C::BaseRegisterType statusRegister2;
+	I2C::BaseRegisterType triseRegister;
 
 	send_buffer_type send_buf;
 	uint8_t bytesSent;

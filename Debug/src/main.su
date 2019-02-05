@@ -3,7 +3,7 @@ core_cm4.h:1535:22:void NVIC_SetPriority(IRQn_Type, uint32_t)	16	static
 gthr-default.h:229:1:int __gthread_key_delete(__gthread_key_t)	16	static
 main.cpp:57:7:void EXTI0_IRQHandler()	8	static
 main.cpp:98:5:int main()	72	static
-main.cpp:290:6:void Delay(uint32_t)	16	static
+main.cpp:291:6:void Delay(uint32_t)	16	static
 gpio.h:145:2:GPIO<gpio_bank, pinNumber, mode, outputType, outputSpeed, pullUpPullDown, alternateFunction>::GPIO() [with long unsigned int gpio_bank = 1073873920ul; long unsigned int pinNumber = 13ul; long unsigned int mode = 1ul; long unsigned int outputType = 0ul; long unsigned int outputSpeed = 1ul; long unsigned int pullUpPullDown = 0ul; long unsigned int alternateFunction = 0ul]	24	static
 gpio.h:145:2:GPIO<gpio_bank, pinNumber, mode, outputType, outputSpeed, pullUpPullDown, alternateFunction>::GPIO() [with long unsigned int gpio_bank = 1073874944ul; long unsigned int pinNumber = 14ul; long unsigned int mode = 0ul; long unsigned int outputType = 0ul; long unsigned int outputSpeed = 1ul; long unsigned int pullUpPullDown = 0ul; long unsigned int alternateFunction = 0ul]	24	static
 gpio.h:145:2:GPIO<gpio_bank, pinNumber, mode, outputType, outputSpeed, pullUpPullDown, alternateFunction>::GPIO() [with long unsigned int gpio_bank = 1073873920ul; long unsigned int pinNumber = 7ul; long unsigned int mode = 2ul; long unsigned int outputType = 1ul; long unsigned int outputSpeed = 2ul; long unsigned int pullUpPullDown = 0ul; long unsigned int alternateFunction = 4ul]	24	static
@@ -15,5 +15,5 @@ reg_access.h:26:17:static void reg_access<addr_type, reg_type, address, value>::
 reg_access.h:26:17:static void reg_access<addr_type, reg_type, address, value>::reg_or() [with addr_type = long unsigned int; reg_type = long unsigned int; addr_type address = 1073873924ul; reg_type value = 64ul]	4	static
 reg_access.h:26:17:static void reg_access<addr_type, reg_type, address, value>::reg_or() [with addr_type = long unsigned int; reg_type = long unsigned int; addr_type address = 1073873924ul; reg_type value = 128ul]	4	static
 reg_access.h:33:17:static void reg_access<addr_type, reg_type, address, value>::reg_xor() [with addr_type = long unsigned int; reg_type = long unsigned int; addr_type address = 1073873940ul; reg_type value = 4096ul]	4	static
-main.cpp:295:1:void __static_initialization_and_destruction_0(int, int)	16	static
-main.cpp:295:1:cpp)	8	static
+main.cpp:296:1:void __static_initialization_and_destruction_0(int, int)	16	static
+main.cpp:296:1:cpp)	8	static

@@ -14,6 +14,7 @@ extern "C"{
 
 	void I2C1_EV_IRQHandler(void)
 	{
+
 	    I2CMaster::handlers[1]-> EV_handler();
 
 	}
@@ -46,26 +47,26 @@ I2CMaster::I2CMaster(I2C::BaseRegisterType baseRegister)
 	    RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
 
 	    //set frequency bits
-	    dynamic_access<I2C::ControlRegister2Type, I2C::ControlRegister2Type>::reg_or(controlRegister2, 0x10U);
+	    dynamic_access<I2C::BaseRegisterType, I2C::ControlRegister2Type>::reg_or(controlRegister2, 0x10U);
 
 	    //configure the clock control registers
-	    dynamic_access<I2C::ClockControlRegisterType, I2C::ClockControlRegisterType>::reg_or(clockControlRegister, 0x50U);
+	    dynamic_access<I2C::BaseRegisterType, I2C::ClockControlRegisterType>::reg_or(0x4000541CU, 0x50U);
 
 	    //configure the rise time register
-	    dynamic_access<I2C::TRiseRegisterType, I2C::TRiseRegisterType>::reg_or(triseRegister, 0x11U);
+	    dynamic_access<I2C::BaseRegisterType, I2C::TRiseRegisterType>::reg_or(triseRegister, 0x11U);
 
 	    //program the I2C_CR1 register to enable the peripheral
-	    dynamic_access<I2C::ControlRegister2Type, I2C::ControlRegister2Type>::reg_or(controlRegister2,
+	    dynamic_access<I2C::BaseRegisterType, I2C::ControlRegister2Type>::reg_or(controlRegister2,
 	    		I2C::ControlRegister2::BufferInterruptEnable |
 				I2C::ControlRegister2::ErrorInterruptEnable |
 				I2C::ControlRegister2::EventInterruptEnable);
 
 
 
-	    dynamic_access<I2C::ControlRegister1Type, I2C::ControlRegister1Type>::reg_not(controlRegister1,
+	    dynamic_access<I2C::BaseRegisterType, I2C::ControlRegister1Type>::reg_or(controlRegister1,
 	    		I2C::ControlRegister1::ACK);
 
-	    dynamic_access<I2C::ControlRegister1Type, I2C::ControlRegister1Type>::reg_or(controlRegister1,
+	    dynamic_access<I2C::BaseRegisterType, I2C::ControlRegister1Type>::reg_or(controlRegister1,
 	    		I2C::ControlRegister1::PeripheralEnable);
 
 
@@ -95,7 +96,7 @@ int I2CMaster::sendBytes(send_buffer_type sendBuffer, uint8_t address)
 	slaveAddress = address;
 
 	//Set Start Bit
-	dynamic_access<I2C::ControlRegister1Type, I2C::ControlRegister1Type> ::reg_or(controlRegister1, I2C::ControlRegister1::Start);
+	dynamic_access<I2C::BaseRegisterType, I2C::ControlRegister1Type> ::reg_or(0x40005400U, I2C::ControlRegister1::Start);
 
 //	//Clear Start bit by reading SR1 followed by writing DR with address
 //	//send address with LSB reset to enter transmit mode
@@ -122,9 +123,37 @@ void I2CMaster::EV_handler()
 
 //	reg_access<GPIOxRegisterType, GPIOxRegisterType, (GPIOxBaseRegisters::GPIO_B + RegisterOffsets::OutputDataRegisterOffset), stm32fxx::bits::BIT12>::reg_xor();
 
-	dynamic_access<I2C::StatusRegister1Type, I2C::StatusRegister1Type>::reg_get(statusRegister1);
+	uint16_t status;
+	uint16_t temp;
 
-	dynamic_access<I2C::DataRegisterType, uint16_t>::reg_or(dataRegister, 0xE0);
+	status = dynamic_access<I2C::BaseRegisterType, uint16_t>::reg_get(0x40005414);
+		reg_access<GPIOxRegisterType, GPIOxRegisterType, (GPIOxBaseRegisters::GPIO_B + RegisterOffsets::OutputDataRegisterOffset), stm32fxx::bits::BIT12>::reg_xor();
+
+
+
+	 if(status && I2C::StatusRegister1::StartBit){
+		dynamic_access<I2C::BaseRegisterType, uint16_t>::reg_or(0x40005410, 0xE0);
+	 }
+
+	if(status && I2C::StatusRegister1::Address){
+		//read SR2
+		status = dynamic_access<I2C::BaseRegisterType, uint16_t>::reg_get(0x40005414);
+		temp = 	dynamic_access<I2C::BaseRegisterType, I2C::StatusRegister1Type>::reg_get(0x40005418);
+	}
+
+	if(status && I2C::StatusRegister1::TransmitEmpty){
+		if(bytesSent < 17){
+			dynamic_access<I2C::BaseRegisterType, uint16_t>::reg_or(0x40005410, 0x00);
+			bytesSent++;
+		}
+		if(bytesSent = 17){
+//			dynamic_access<I2C::BaseRegisterType, uint16_t>::reg_or(0x40005410, 0x01);
+			dynamic_access<I2C::BaseRegisterType, uint16_t>::reg_or(0x40005400, I2C::ControlRegister1::Stop);
+
+		}
+	}
+
+
 
 //	if((dynamic_access<I2C::StatusRegister1Type, I2C::StatusRegister1Type>::reg_get(statusRegister1) & I2C::StatusRegister1::TransmitEmpty) && (bytesSent < 17)){
 //		dynamic_access<I2C::DataRegisterType, uint8_t>::reg_set(dataRegister, send_buf[bytesSent]);
