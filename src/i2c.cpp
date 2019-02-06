@@ -69,28 +69,13 @@ I2CMaster::I2CMaster(I2C::BaseRegisterType baseRegister)
 	    dynamic_access<I2C::BaseRegisterType, I2C::ControlRegister1Type>::reg_or(controlRegister1,
 	    		I2C::ControlRegister1::PeripheralEnable);
 
-
-
-
-	    // Initialization struct
-//	    I2C_InitTypeDef I2C_InitStruct;
-//	    I2C_InitStruct.I2C_ClockSpeed = 100000;
-//	    I2C_InitStruct.I2C_Mode = I2C_Mode_I2C;
-//	    I2C_InitStruct.I2C_DutyCycle = I2C_DutyCycle_2;
-//	    I2C_InitStruct.I2C_OwnAddress1 = 0x00;
-//	    I2C_InitStruct.I2C_Ack = I2C_Ack_Disable;
-//	    I2C_InitStruct.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
-//	    I2C_Init(I2Cx, &I2C_InitStruct);
-//	    I2C_Cmd(I2Cx, ENABLE);
-
-
-
 }
 
-int I2CMaster::sendBytes(send_buffer_type sendBuffer, uint8_t address)
+int I2CMaster::sendBytes(I2C::send_buffer_type sendBuffer, uint8_t address)
 {
 
 	bytesSent = 0;
+	dataSent = false;
 
 	send_buf = sendBuffer;
 	slaveAddress = address;
@@ -98,21 +83,7 @@ int I2CMaster::sendBytes(send_buffer_type sendBuffer, uint8_t address)
 	//Set Start Bit
 	dynamic_access<I2C::BaseRegisterType, I2C::ControlRegister1Type> ::reg_or(0x40005400U, I2C::ControlRegister1::Start);
 
-//	//Clear Start bit by reading SR1 followed by writing DR with address
-//	//send address with LSB reset to enter transmit mode
-//	dynamic_access<I2C::StatusRegister1Type, I2C::StatusRegister1Type>::reg_get(statusRegister1);
-//	dynamic_access<I2C::DataRegisterType, uint8_t>::reg_set(dataRegister, (address << 1));
-//
-//	//ADDR = 1, cleared by reading SR1 register followed by reading SR2
-//	dynamic_access<I2C::StatusRegister1Type, I2C::StatusRegister1Type>::reg_get(statusRegister1);
-//	dynamic_access<I2C::StatusRegister2Type, I2C::StatusRegister2Type>::reg_get(statusRegister2);
-//
-//	//TxE = 1, write Data1 in DR
-//	dynamic_access<I2C::DataRegisterType, uint8_t>::reg_set(dataRegister, send_buf[bytesSent]);
-//	bytesSent++;
-//
-//	//keep writing data
-//	//TxE = 1, BTF = 1, program stop request
+
 
 
 	return 1;
@@ -121,50 +92,45 @@ int I2CMaster::sendBytes(send_buffer_type sendBuffer, uint8_t address)
 void I2CMaster::EV_handler()
 {
 
-//	reg_access<GPIOxRegisterType, GPIOxRegisterType, (GPIOxBaseRegisters::GPIO_B + RegisterOffsets::OutputDataRegisterOffset), stm32fxx::bits::BIT12>::reg_xor();
-
 	uint16_t status;
 	uint16_t temp;
 
 	status = dynamic_access<I2C::BaseRegisterType, uint16_t>::reg_get(0x40005414);
-		reg_access<GPIOxRegisterType, GPIOxRegisterType, (GPIOxBaseRegisters::GPIO_B + RegisterOffsets::OutputDataRegisterOffset), stm32fxx::bits::BIT12>::reg_xor();
+	reg_access<GPIOxRegisterType, GPIOxRegisterType, (GPIOxBaseRegisters::GPIO_B + RegisterOffsets::OutputDataRegisterOffset), stm32fxx::bits::BIT12>::reg_xor();
 
 
 
-	 if(status && I2C::StatusRegister1::StartBit){
-		dynamic_access<I2C::BaseRegisterType, uint16_t>::reg_or(0x40005410, 0xE0);
+	 if(status & I2C::StatusRegister1::StartBit){
+		 //send address
+		dynamic_access<I2C::BaseRegisterType, uint16_t>::reg_set(0x40005410, 0xE0);
 	 }
 
-	if(status && I2C::StatusRegister1::Address){
+	if(status & I2C::StatusRegister1::Address){
 		//read SR2
 		status = dynamic_access<I2C::BaseRegisterType, uint16_t>::reg_get(0x40005414);
-		temp = 	dynamic_access<I2C::BaseRegisterType, I2C::StatusRegister1Type>::reg_get(0x40005418);
+		temp = 	dynamic_access<I2C::BaseRegisterType, uint16_t>::reg_get(0x40005418);
 	}
 
-	if(status && I2C::StatusRegister1::TransmitEmpty){
-		if(bytesSent < 17){
-			dynamic_access<I2C::BaseRegisterType, uint16_t>::reg_or(0x40005410, 0x00);
+	if((status & I2C::StatusRegister1::TransmitEmpty)){ 	//& (status & I2C::StatusRegister1::ByteTransferFinished)
+
+		if((bytesSent <= 17) & (!dataSent)){
+			dynamic_access<I2C::BaseRegisterType, uint8_t>::reg_set(0x40005410, send_buf[bytesSent]);
 			bytesSent++;
 		}
-		if(bytesSent = 17){
-//			dynamic_access<I2C::BaseRegisterType, uint16_t>::reg_or(0x40005410, 0x01);
+		if((bytesSent > 17) & (!dataSent)){
+
+			dataSent = true;
 			dynamic_access<I2C::BaseRegisterType, uint16_t>::reg_or(0x40005400, I2C::ControlRegister1::Stop);
 
 		}
+
+		if(dataSent){
+
+//			dynamic_access<I2C::BaseRegisterType, uint16_t>::reg_or(0x40005400, I2C::ControlRegister1::Stop);
+
+		}
 	}
 
-
-
-//	if((dynamic_access<I2C::StatusRegister1Type, I2C::StatusRegister1Type>::reg_get(statusRegister1) & I2C::StatusRegister1::TransmitEmpty) && (bytesSent < 17)){
-//		dynamic_access<I2C::DataRegisterType, uint8_t>::reg_set(dataRegister, send_buf[bytesSent]);
-//		bytesSent++;
-//	}
-//
-//	if((dynamic_access<I2C::StatusRegister1Type, I2C::StatusRegister1Type>::reg_get(statusRegister1) & I2C::StatusRegister1::TransmitEmpty) && (bytesSent = 17)){
-//		dynamic_access<I2C::DataRegisterType, uint8_t>::reg_set(dataRegister, send_buf[bytesSent]);
-//		dynamic_access<I2C::ControlRegister1Type, I2C::ControlRegister1Type>::reg_or(controlRegister1, I2C::ControlRegister1::Stop);
-//		bytesSent++;
-//	}
 
 }
 

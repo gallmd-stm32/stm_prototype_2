@@ -35,6 +35,8 @@ namespace I2C
 	typedef uint16_t ClockControlRegisterType;
 	typedef uint16_t TRiseRegisterType;
 	typedef uint16_t FilterRegisterTYpe;
+    typedef std::array<uint8_t, 17>send_buffer_type;
+
 
 
 	namespace BaseRegisters
@@ -887,9 +889,8 @@ namespace I2C
 class I2CMaster{
 
 public:
-    typedef std::array<uint8_t, 17>send_buffer_type;
 	I2CMaster(I2C::BaseRegisterType baseRegister);
-	int sendBytes(send_buffer_type sendBuffer, uint8_t address);
+	int sendBytes(I2C::send_buffer_type sendBuffer, uint8_t address);
 
     static I2CMaster* handlers[1];
     void EV_handler();
@@ -909,9 +910,10 @@ private:
 	I2C::BaseRegisterType statusRegister2;
 	I2C::BaseRegisterType triseRegister;
 
-	send_buffer_type send_buf;
+	I2C::send_buffer_type send_buf;
 	uint8_t bytesSent;
 	uint8_t slaveAddress;
+	bool dataSent;
 
 
 

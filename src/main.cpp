@@ -180,71 +180,6 @@ int main(void)
   	  PullUpPullDown::NoPullUpPullDown,
   	  AlternateFunction::AF4>sclPin;
 
-//  //*********************************************************************************************************************
-//
-//	I2C::ClockControlRegisterType clockControlRegister;
-//	I2C::ControlRegister1Type controlRegister1;
-//	I2C::ControlRegister2Type controlRegister2;
-//	I2C::DataRegisterType dataRegister;
-//	I2C::FilterRegisterTYpe filterRegister;
-//	I2C::OwnAddressRegisterType ownAddressRegister;
-//	I2C::OwnAddressRegister2Type ownAddressRegister2;
-//	I2C::StatusRegister1Type statusRegister1;
-//	I2C::StatusRegister2Type statusRegister2;
-//	I2C::TRiseRegisterType triseRegister;
-//	I2C::BaseRegisterType baseRegister;
-//
-//	baseRegister = I2C::BaseRegisters::I2C1_Base;
-//
-//	clockControlRegister = baseRegister + I2C::ClockControlRegister::RegiserOffset;
-//	controlRegister1 = baseRegister + I2C::ControlRegister1::RegisterOffset;
-//	controlRegister2 = baseRegister + I2C::ControlRegister2::RegisterOffset;
-//	dataRegister = baseRegister + I2C::DataRegister::RegisterOffset;
-//	filterRegister = baseRegister + I2C::FilterRegister::RegisterOffset;
-//	ownAddressRegister = baseRegister + I2C::OwnAddressRegister::RegisterOffset;
-//	ownAddressRegister2 = baseRegister + I2C::OwnAddressRegister2::RegisterOffset;
-//	statusRegister1 = baseRegister + I2C::StatusRegister1::RegisterOffset;
-//	statusRegister2 = baseRegister + I2C::StatusRegister2::RegisterOffset;
-//	triseRegister = baseRegister + I2C::TRiseRegiser::RegisterOffset;
-//
-//	uint8_t bytesSent;
-//
-//	// Step 1: Initialize I2C
-//	//Program the peripheral input clock in the I2C_CR2 register in order to generate the correct timings
-//	RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
-//
-//	//set frequency bits
-//	dynamic_access<I2C::ControlRegister2Type, I2C::ControlRegister2Type>::reg_or(controlRegister2, 0x10U);
-//
-//    //configure the clock control registers
-//    dynamic_access<I2C::ClockControlRegisterType, I2C::ClockControlRegisterType>::reg_or(clockControlRegister, 0x50U);
-//
-//    //configure the rise time register
-//    dynamic_access<I2C::TRiseRegisterType, I2C::TRiseRegisterType>::reg_or(triseRegister, 0x11U);
-//
-//    //program the I2C_CR1 register to enable the peripheral
-//    dynamic_access<I2C::ControlRegister2Type, I2C::ControlRegister2Type>::reg_or(controlRegister2,
-//    		I2C::ControlRegister2::BufferInterruptEnable |
-//			I2C::ControlRegister2::ErrorInterruptEnable |
-//			I2C::ControlRegister2::EventInterruptEnable);
-//
-//
-//
-//    dynamic_access<I2C::ControlRegister1Type, I2C::ControlRegister1Type>::reg_not(controlRegister1,
-//    		I2C::ControlRegister1::ACK);
-//
-//    dynamic_access<I2C::ControlRegister1Type, I2C::ControlRegister1Type>::reg_or(controlRegister1,
-//    		I2C::ControlRegister1::PeripheralEnable);
-//
-//	dynamic_access<I2C::ControlRegister1Type, I2C::ControlRegister1Type> ::reg_or(controlRegister1, I2C::ControlRegister1::Start);
-//
-//
-//	//**********************************************************************************************************************
-
-
-
-
-
 
   /**
   *  IMPORTANT NOTE!
@@ -257,18 +192,20 @@ int main(void)
   */
 
   /* TODO - Add your application code here */
-  const std::array<uint8_t, 17> osc_on = {0x21, 0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+  I2C::send_buffer_type osc_on = {0x21, 0,0,0,0,0,0,0,0,0,0,0,0,0,0};
   i2c.sendBytes(osc_on, 0x070);
 
-//  const std::array<uint8_t, 17> no_blink = {0x81, 0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-//  i2c.sendBytes(no_blink, 0x070);
-//
-//  const std::array<uint8_t, 17> brightness = {0xEF, 0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-//  i2c.sendBytes(brightness, 0x070);
-//
-//
-//  const std::array<uint8_t, 17> all_on = {0x00, 0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00};
-//  i2c.sendBytes(all_on, 0x070);
+  Delay(0xFFFFF);
+  I2C::send_buffer_type no_blink = {0x81, 0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+  i2c.sendBytes(no_blink, 0x070);
+
+  Delay(0xFFFFF);
+  I2C::send_buffer_type brightness = {0xEF, 0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+  i2c.sendBytes(brightness, 0x070);
+
+  Delay(0xFFFFF);
+  I2C::send_buffer_type all_on = {0x00, 0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00};
+  i2c.sendBytes(all_on, 0x070);
 //
 //  const std::array<uint8_t, 17> all_off = {0x00, 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 //  i2c.sendBytes(all_off, 0x070);
@@ -281,8 +218,6 @@ int main(void)
   {
 	  if(buttonPressed){
 	  greenLED.toggle();
-	  i2c.sendBytes(osc_on, 0x070);
-//	  Delay(0xFFFFF);
 	  buttonPressed = false;
 	  }
 	i++;
