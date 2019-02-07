@@ -34,6 +34,7 @@ SOFTWARE.
 #include "misc.h"
 #include "gpio.h"
 #include "i2c.h"
+#include "display.h"
 
 
 /* Private macro */
@@ -66,23 +67,6 @@ extern "C"
 		}
 	}
 }
-
-//extern "C"{
-//
-//	void I2C1_EV_IRQHandler(void)
-//	{
-//		buttonPressed= true;
-//		Delay(0xFFFFF);
-//	}
-//}
-//
-//extern "C"{
-//	void I2C1_ER_IRQHandler(void)
-//	{
-//		buttonPressed= true;
-//		Delay(0xFFFFF);
-//	}
-//}
 
 
 
@@ -132,12 +116,6 @@ int main(void)
 
   NVIC_EnableIRQ(EXTI0_IRQn);
   NVIC_SetPriority(EXTI0_IRQn, 0);
-
-//  NVIC_EnableIRQ(I2C1_EV_IRQn);
-//  NVIC_SetPriority(I2C1_EV_IRQn, 0);
-//
-//  NVIC_EnableIRQ(I2C1_ER_IRQn);
-//  NVIC_SetPriority(I2C1_ER_IRQn, 0);
 
   __enable_irq();
 
@@ -206,19 +184,86 @@ int main(void)
   Delay(0xFFFFF);
   I2C::send_buffer_type all_on = {0x00, 0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00};
   i2c.sendBytes(all_on, 0x070);
-//
-//  const std::array<uint8_t, 17> all_off = {0x00, 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
-//  i2c.sendBytes(all_off, 0x070);
 
+  Delay(0xFFFFF);
+  const std::array<uint8_t, 17> all_off = {0x00, 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+  i2c.sendBytes(all_off, 0x070);
 
+  Delay(0xFFFFF);
+  const std::array<uint8_t, 17> testA = {0x00, 0x7F,0x00,0x88,0x00,0x88,0x00,0x88,0x00,0x7F,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+  i2c.sendBytes(testA, 0x070);
 
+  bool panelOn = false;
+  int displayAddress = 0x70;
 
   /* Infinite loop */
   while (1)
   {
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::A, displayAddress);
+
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::B, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::C, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::D, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::E, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::F, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::G, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::H, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::I, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::J, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::K, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::L, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::M, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::N, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::O, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::P, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::Q, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::R, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::S, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::T, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::U, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::V, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::W, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::X, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::Y, displayAddress);
+	  Delay(0xFFFFF);
+	  i2c.sendBytes(display::characters::Z, displayAddress);
+
 	  if(buttonPressed){
 	  greenLED.toggle();
 	  buttonPressed = false;
+
+	  	  if(panelOn){
+	  		  i2c.sendBytes(all_off, 0x70);
+	  		  panelOn = false;
+	  	  }else if(!panelOn){
+	  		  i2c.sendBytes(all_on, 0x70);
+	  		  panelOn = true;
+	  	  }
 	  }
 	i++;
   }

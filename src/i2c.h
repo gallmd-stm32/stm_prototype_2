@@ -895,6 +895,7 @@ public:
     static I2CMaster* handlers[1];
     void EV_handler();
     void ER_handler();
+    void init();
 
 
 private:
