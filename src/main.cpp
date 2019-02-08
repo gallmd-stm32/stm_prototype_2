@@ -200,58 +200,9 @@ int main(void)
   while (1)
   {
 	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::A, displayAddress);
+	  i2c.sendBytes(display::characters::allCharacters[i], displayAddress);
 
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::B, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::C, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::D, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::E, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::F, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::G, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::H, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::I, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::J, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::K, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::L, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::M, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::N, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::O, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::P, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::Q, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::R, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::S, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::T, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::U, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::V, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::W, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::X, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::Y, displayAddress);
-	  Delay(0xFFFFF);
-	  i2c.sendBytes(display::characters::Z, displayAddress);
+
 
 	  if(buttonPressed){
 	  greenLED.toggle();
@@ -266,6 +217,9 @@ int main(void)
 	  	  }
 	  }
 	i++;
+	if(i==71){
+		i = 0;
+	}
   }
 }
 void Delay(__IO uint32_t nCount)
